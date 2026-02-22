@@ -52,7 +52,8 @@ function MapController({ userLocation }: { userLocation: [number, number] | null
   if (!userLocation) return null;
 
   return (
-    <div className="absolute bottom-24 right-6 z-[1000] flex flex-col items-center gap-2">
+    // FIX 1: Bumped bottom-24 to bottom-40 on mobile (md:bottom-28 on desktop)
+    <div className="absolute bottom-40 right-6 md:bottom-28 md:right-8 z-[1000] flex flex-col items-center gap-2">
       {showRecenter && (
         <button
           onClick={() => {
@@ -93,8 +94,7 @@ function DraggablePinMode({ onConfirm, onCancel }: { onConfirm: (lat: number, ln
         <Popup>Drag me exactly where the issue is!</Popup>
       </Marker>
 
-      {/* Floating Action Buttons for the Drop Pin mode */}
-      <div className="absolute bottom-12 left-1/2 z-[2000] flex w-full max-w-sm -translate-x-1/2 justify-center gap-3 px-4">
+      <div className="absolute bottom-32 md:bottom-12 left-1/2 z-[2000] flex w-full max-w-sm -translate-x-1/2 justify-center gap-3 px-4">
         <button 
           onClick={onCancel} 
           className="rounded-full bg-white px-6 py-3 font-bold text-gray-700 shadow-xl transition-transform active:scale-95"
@@ -151,6 +151,12 @@ export default function MapComponent({
       <MapContainer 
         center={[14.6507, 121.1029]} 
         zoom={13} 
+        minZoom={6}
+        maxBounds={[
+          [4.0, 112.0], // South-West Limit
+          [22.0, 128.0] // North-East Limit
+        ]}
+        maxBoundsViscosity={1.0}
         style={{ height: '100%', width: '100%', zIndex: 0 }}
       >
         <TileLayer
@@ -183,10 +189,8 @@ export default function MapComponent({
           </Marker>
         ))}
 
-        {/* Center Recenter logic */}
         <MapController userLocation={userLocation} />
 
-        {/* NEW: Draggable Pin logic */}
         {isDroppingPin && onPinDropConfirm && onPinDropCancel && (
           <DraggablePinMode onConfirm={onPinDropConfirm} onCancel={onPinDropCancel} />
         )}
