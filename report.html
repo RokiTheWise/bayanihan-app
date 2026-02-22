@@ -7,12 +7,13 @@
         body { font-family: sans-serif; padding: 20px; background: #f4f4f9; text-align: center; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
         button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        select, textarea, input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
         #status { margin-top: 15px; color: #666; font-size: 14px; }
         
-        /* NEW STYLES FOR BACK LINK */
         .back-link { display: inline-block; margin-top: 15px; color: #666; text-decoration: none; font-size: 14px;}
         .back-link:hover { color: #000; text-decoration: underline;}
+        
+        .file-upload-wrapper { background: #eef2f3; padding: 10px; border-radius: 8px; border: 1px dashed #007bff; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -29,7 +30,12 @@
 
     <textarea id="desc" placeholder="Briefly describe the problem..."></textarea>
     
-    <button onclick="getLocationAndSubmit()">📍 Submit Report</button>
+    <div class="file-upload-wrapper">
+        <label for="photo" style="font-size: 14px; font-weight: bold; color: #333;">📸 Attach Photo Evidence:</label>
+        <input type="file" id="photo" accept="image/*" capture="environment">
+    </div>
+    
+    <button onclick="getLocationAndSubmit()" id="submitBtn">📍 Submit Report</button>
     
     <a href="index.html" class="back-link">🔙 Cancel and return to Map</a>
     
@@ -42,16 +48,55 @@
 
     async function getLocationAndSubmit() {
         const status = document.getElementById('status');
-        status.innerText = "🛰️ Fetching GPS location...";
+        const submitBtn = document.getElementById('submitBtn');
+        const photoInput = document.getElementById('photo');
+        
+        // Disable button so they don't click twice while it's uploading
+        submitBtn.disabled = true;
+        submitBtn.style.background = "#ccc";
+        
+        status.innerText = "🛰️ Fetching exact GPS location...";
 
         // 1. Get Real GPS Coordinates
         navigator.geolocation.getCurrentPosition(async (position) => {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             
-            status.innerText = "🚀 Sending to Singapore...";
+            // Set a default placeholder in case they don't upload a photo
+            let finalPhotoUrl = 'https://placehold.co/600x400?text=No+Photo+Provided';
 
-            // 2. Insert into Supabase
+            // 2. Upload Photo if one was selected
+            if (photoInput.files.length > 0) {
+                status.innerText = "📸 Uploading photo evidence...";
+                const file = photoInput.files[0];
+                
+                // Create a unique file name using the current timestamp
+                const fileExt = file.name.split('.').pop();
+                const fileName = `report_${Date.now()}.${fileExt}`;
+
+                // Push to Supabase Storage
+                const { error: uploadError } = await supabaseClient.storage
+                    .from('bayanihan-photos')
+                    .upload(fileName, file);
+
+                if (uploadError) {
+                    status.innerText = "❌ Image Upload Failed: " + uploadError.message;
+                    submitBtn.disabled = false;
+                    submitBtn.style.background = "#007bff";
+                    return; // Stop the process if the image fails
+                }
+
+                // Get the public URL of the uploaded image
+                const { data } = supabaseClient.storage
+                    .from('bayanihan-photos')
+                    .getPublicUrl(fileName);
+                    
+                finalPhotoUrl = data.publicUrl;
+            }
+
+            status.innerText = "🚀 Dropping pin on the Bayanihan Network...";
+
+            // 3. Insert into Supabase Database
             const { error } = await supabaseClient
                 .from('reports')
                 .insert([{
@@ -59,21 +104,24 @@
                     description: document.getElementById('desc').value,
                     latitude: lat,
                     longitude: lng,
-                    municipality: 'Marikina', // Test for now
-                    photo_url: 'https://placehold.co/600x400?text=App+Proof'
+                    municipality: 'Philippines', 
+                    photo_url: finalPhotoUrl 
                 }]);
 
             if (error) {
                 status.innerText = "❌ Error: " + error.message;
+                submitBtn.disabled = false;
+                submitBtn.style.background = "#007bff";
             } else {
                 status.innerText = "✅ PIN DROPPED! Redirecting...";
-                alert("Success! Your report is live.");
-                // AFTER SUCCESS, SEND THEM BACK TO THE MAP AUTOMATICALLY
+                alert("Success! Your evidence is now live on the map.");
                 window.location.href = "index.html"; 
             }
         }, (err) => {
             status.innerText = "❌ Please enable GPS to report.";
-        }, { enableHighAccuracy: true, timeout: 10000 }); // <-- Added high accuracy gps location
+            submitBtn.disabled = false;
+            submitBtn.style.background = "#007bff";
+        }, { enableHighAccuracy: true, timeout: 10000 });
     }
 </script>
 </body>
