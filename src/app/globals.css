@@ -10,6 +10,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Philippine Blue Palette */
+  --color-ph-blue-50: #eef4ff;
+  --color-ph-blue-100: #d9e6ff;
+  --color-ph-blue-500: #0038a7; 
+  --color-ph-blue-600: #00308f; 
+  --color-ph-blue-900: #001a52;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +30,21 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* User Location Pulse Animation */
+.user-pulse {
+  background: #0038a7;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 rgba(0, 56, 167, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 56, 167, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 56, 167, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 56, 167, 0); }
 }
