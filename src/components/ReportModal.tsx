@@ -203,7 +203,7 @@ lng = parseFloat(pos.coords.longitude.toFixed(6));
                 </div>
 
                 <select 
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 p-3 font-medium text-gray-900 outline-none focus:ring-2 focus:ring-bayanihan-blue" 
+                  className="w-full appearance-none rounded-lg border border-gray-200 bg-gray-50 p-3 font-bold text-black outline-none focus:ring-2 focus:ring-bayanihan-blue" 
                   value={category} onChange={(e) => setCategory(e.target.value)}
                 >
                   <option value="Roads">Potholes / Broken Roads</option>
@@ -212,7 +212,7 @@ lng = parseFloat(pos.coords.longitude.toFixed(6));
                 </select>
 
                 <textarea 
-                  className={`h-28 w-full resize-none rounded-lg border bg-gray-50 p-3 text-gray-900 placeholder-gray-500 outline-none focus:ring-2 ${
+                  className={`h-28 w-full resize-none rounded-lg border bg-gray-50 p-3 text-black placeholder:text-gray-500 outline-none focus:ring-2 ${
                     desc.length > 0 && !isDescValid ? 'border-red-300 focus:ring-red-400' : 'border-gray-200 focus:ring-bayanihan-blue'
                   }`}
                   placeholder="Describe the problem..." 
