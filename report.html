@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bayanihan: Report Issue 🇵🇭</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; text-align: center; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        button { background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
+        select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        #status { margin-top: 15px; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>📢 Report an Issue</h2>
+    <p>Help improve your community.</p>
+
+    <select id="category">
+        <option value="Roads">Potholes / Broken Roads</option>
+        <option value="Lights">Streetlights Out</option>
+        <option value="Trash">Uncollected Garbage</option>
+    </select>
+
+    <textarea id="desc" placeholder="Briefly describe the problem..."></textarea>
+    
+    <button onclick="getLocationAndSubmit()">📍 Submit Report</button>
+    <div id="status">Ready to help.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const supabaseClient = supabase.createClient('https://nckgchogklqyiokfmyxv.supabase.co', 'sb_publishable_JYN3sLgnn9ESuz9LidgQmA_F4F9e3tO');
+
+    async function getLocationAndSubmit() {
+        const status = document.getElementById('status');
+        status.innerText = "🛰️ Fetching GPS location...";
+
+        // 1. Get Real GPS Coordinates
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            status.innerText = "🚀 Sending to Singapore...";
+
+            // 2. Insert into Supabase
+            const { error } = await supabaseClient
+                .from('reports')
+                .insert([{
+                    category: document.getElementById('category').value,
+                    description: document.getElementById('desc').value,
+                    latitude: lat,
+                    longitude: lng,
+                    municipality: 'Marikina', // Test for now
+                    photo_url: 'https://placehold.co/600x400?text=App+Proof'
+                }]);
+
+            if (error) {
+                status.innerText = "❌ Error: " + error.message;
+            } else {
+                status.innerText = "✅ PIN DROPPED! Bayanihan in action.";
+                alert("Success! Your report is live.");
+            }
+        }, (err) => {
+            status.innerText = "❌ Please enable GPS to report.";
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bayanihan National Map 🇵🇭</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; }
+        #map { height: 100vh; width: 100vw; } /* Full screen map */
+        .info-panel {
+            position: absolute; top: 10px; right: 10px; z-index: 1000;
+            background: white; padding: 15px; border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); max-width: 250px;
+        }
+        .status-PENDING { color: #d9534f; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="info-panel">
+    <h3>🇵🇭 Bayanihan Map</h3>
+    <p>Real-time community reports from across the Philippines.</p>
+    <div id="stats">Loading pins...</div>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    // 1. Initialize Supabase
+    const SUPABASE_URL = 'https://nckgchogklqyiokfmyxv.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_JYN3sLgnn9ESuz9LidgQmA_F4F9e3tO';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // 2. Initialize Map 
+    const map = L.map('map').setView([14.6507, 121.1029], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3. Fetch Data from Singapore
+    async function fetchPins() {
+        const { data: reports, error } = await supabaseClient
+            .from('reports')
+            .select('*');
+
+        if (error) {
+            console.error("Error fetching pins:", error.message);
+            return;
+        }
+
+        document.getElementById('stats').innerText = `${reports.length} issues reported.`;
+
+        // 4. Drop Pins on the Map
+        reports.forEach(report => {
+            const marker = L.marker([report.latitude, report.longitude]).addTo(map);
+            
+            // Popup content with the "Evidence" photo
+            marker.bindPopup(`
+                <strong>${report.category}</strong><br>
+                <p>${report.description}</p>
+                <img src="${report.photo_url}" style="width:100%; border-radius:5px; margin-top:5px;">
+                <br><br>
+                <span class="status-${report.status}">Status: ${report.status}</span>
+            `);
+        });
+    }
+
+    fetchPins();
+</script>
+</body>
+</html>
