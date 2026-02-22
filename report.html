@@ -73,7 +73,7 @@
             }
         }, (err) => {
             status.innerText = "❌ Please enable GPS to report.";
-        });
+        }, { enableHighAccuracy: true, timeout: 10000 }); // <-- Added high accuracy gps location
     }
 </script>
 </body>
