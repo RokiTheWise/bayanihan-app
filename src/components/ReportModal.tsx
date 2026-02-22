@@ -148,7 +148,7 @@ lng = parseFloat(pos.coords.longitude.toFixed(6));
           <motion.div
             initial={{ scale: 0, rotate: "12.5deg" }} animate={{ scale: 1, rotate: "0deg" }} exit={{ scale: 0, rotate: "0deg" }}
             onClick={(e) => e.stopPropagation()} 
-            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl border border-gray-100"
+            className="relative w-full max-w-md max-h-[95vh] overflow-y-auto scrollbar-hide rounded-2xl bg-white p-5 shadow-2xl border border-gray-100"
           >
             <button onClick={handleClose} className="absolute right-4 top-4 z-20 rounded-full p-2 text-gray-400 hover:bg-gray-100">
               <FiX size={20} />
@@ -157,12 +157,12 @@ lng = parseFloat(pos.coords.longitude.toFixed(6));
             <FiMapPin className="absolute -left-24 -top-24 z-0 text-[250px] text-gray-50 rotate-12" />
             
             <div className="relative z-10">
-              <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-bayanihan-light text-3xl text-bayanihan-blue">
-                <FiMapPin />
-              </div>
+            <div className="mx-auto mb-2 grid h-14 w-14 place-items-center rounded-full bg-bayanihan-light text-2xl text-bayanihan-blue">
+              <FiMapPin />
+            </div>
 
-              <h3 className="mb-2 text-center text-3xl font-black text-gray-900">Report an Issue</h3>
-              <p className="mb-6 text-center font-medium text-gray-500">Help improve your community.</p>
+            <h3 className="mb-1 text-center text-2xl font-black text-gray-900 leading-tight">Report an Issue</h3>
+            <p className="mb-4 text-center text-sm font-medium text-gray-500">Help improve your community.</p>
 
               <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
                 
