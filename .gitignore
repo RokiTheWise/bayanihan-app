@@ -1,0 +1,13 @@
+# Dependency folders (never upload these, they are huge)
+node_modules/
+
+# Environment Variables (YOUR SECRETS GO HERE)
+.env
+.env.local
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
