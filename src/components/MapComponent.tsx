@@ -44,8 +44,7 @@ function MapController({ userLocation }: { userLocation: [number, number] | null
   if (!userLocation) return null;
 
   return (
-    // Pushed up and z-index cranked so it stays above the map layer
-    <div className="absolute bottom-28 right-4 md:bottom-28 md:right-8 z-[9999] flex flex-col items-center gap-2">
+    <div className="absolute bottom-44 right-4 md:bottom-32 md:right-8 z-[9999] flex flex-col items-center gap-2">
       {showRecenter && (
         <button
           onClick={() => { map.flyTo(userLocation, 16, { animate: true }); setShowRecenter(false); }}
@@ -61,7 +60,6 @@ function MapController({ userLocation }: { userLocation: [number, number] | null
   );
 }
 
-// 2. DROP PIN CONFIRM BUTTON FIX
 function DraggablePinMode({ onConfirm, onCancel }: { onConfirm: (lat: number, lng: number) => void, onCancel: () => void }) {
   const map = useMap();
   const [pos, setPos] = useState(map.getCenter());
@@ -77,8 +75,7 @@ function DraggablePinMode({ onConfirm, onCancel }: { onConfirm: (lat: number, ln
         <Popup>Drag me exactly where the issue is!</Popup>
       </Marker>
 
-      {/* Floating Action Buttons securely positioned for mobile */}
-      <div className="absolute bottom-16 left-1/2 z-[9999] flex w-full max-w-sm -translate-x-1/2 justify-center gap-3 px-4">
+      <div className="absolute bottom-24 left-1/2 z-[9999] flex w-full max-w-sm -translate-x-1/2 justify-center gap-3 px-4">
         <button onClick={onCancel} className="rounded-full bg-white px-6 py-4 font-bold text-gray-800 shadow-2xl ring-1 ring-gray-200 transition-transform active:scale-95">
           Cancel
         </button>
@@ -111,7 +108,6 @@ export default function MapComponent({ isDroppingPin, onPinDropConfirm, onPinDro
   }
 
   return (
-    // 3. HEIGHT FIX: Changed h-screen to h-full so it fits safely inside the screen
     <div className="relative h-full w-full">
       <MapContainer 
         center={[14.6507, 121.1029]} zoom={13} minZoom={6}
