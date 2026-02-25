@@ -52,4 +52,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 - [ ] Add custom map markers (Category Icons) for different issue types.
 - [ ] Replace native browser alerts with custom Toast notifications.
+- [ ] Enable notification subscription for municipalities.
+- [ ] Implement resolve leaderboards
 - [ ] Explore AI-based image moderation to filter trolls and ensure community safety.
+- [ ] Public Launch.
+- [ ] Endorse project to communities.
